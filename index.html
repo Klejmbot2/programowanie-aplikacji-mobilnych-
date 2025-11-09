@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikacja ToDo</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="modern-navbar">
+        <div class="nav-wrapper container">
+            <a href="#" class="brand-logo modern-logo">
+                <i class="material-icons left">check_circle</i>ToDo App
+            </a>
+            <ul class="right hide-on-med-and-down">
+                <li>
+                    <span class="badge white-text blue darken-3" id="task-counter">
+                        Aktywne: <span id="active-count">0</span>
+                    </span>
+                </li>
+            </ul>
+            <ul class="right hide-on-large-only">
+                <li>
+                    <span class="badge white-text blue darken-3" id="task-counter-mobile">
+                        <span id="active-count-mobile">0</span>
+                    </span>
+                </li>
+            </ul>
+            <ul class="right">
+                <li style="display: flex; align-items: center; padding: 0 15px;">
+                    <label style="display: flex; align-items: center; color: white; margin: 0;">
+                        <input type="checkbox" id="dark-mode-toggle" style="margin-right: 10px;">
+                        <span style="margin-left: 5px;">Dark Mode</span>
+                    </label>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Formularz dodawania zadania -->
+        <div class="row">
+            <div class="col s12">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title">Dodaj nowe zadanie</span>
+                        <form id="task-form">
+                            <div class="row">
+                                <div class="input-field col s12 m6">
+                                    <input id="task-title" type="text" class="validate" required>
+                                    <label for="task-title">Tytuł zadania *</label>
+                                </div>
+                                <div class="input-field col s12 m6">
+                                    <input id="task-assignee" type="text" class="validate">
+                                    <label for="task-assignee">Wykonawca</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12 m6">
+                                    <input id="task-client" type="text" class="validate">
+                                    <label for="task-client">Zleceniodawca zadania</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <textarea id="task-description" class="materialize-textarea"></textarea>
+                                    <label for="task-description">Opis zadania</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12 m4">
+                                    <select id="task-priority">
+                                        <option value="low">Niski</option>
+                                        <option value="medium" selected>Średni</option>
+                                        <option value="high">Wysoki</option>
+                                    </select>
+                                    <label>Priorytet</label>
+                                </div>
+                                <div class="input-field col s12 m4">
+                                    <input type="text" id="task-deadline" class="datepicker">
+                                    <label for="task-deadline">Deadline</label>
+                                </div>
+                                <div class="input-field col s12 m4">
+                                    <input id="task-category" type="text" class="validate">
+                                    <label for="task-category">Kategoria/Tagi</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12">
+                                    <button class="btn waves-effect waves-light blue darken-2" type="submit">
+                                        <i class="material-icons left">add</i>Dodaj zadanie
+                                    </button>
+                                    <button class="btn waves-effect waves-light grey" type="button" id="cancel-edit" style="display: none;">
+                                        <i class="material-icons left">cancel</i>Anuluj edycję
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtry i wyszukiwarka -->
+        <div class="row">
+            <div class="col s12">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="row valign-wrapper">
+                            <div class="col s12 m6">
+                                <div class="input-field search-field">
+                                    <i class="material-icons prefix">search</i>
+                                    <input type="text" id="search-input" placeholder="Wyszukaj zadania...">
+                                </div>
+                            </div>
+                            <div class="col s12 m6">
+                                <div class="filter-buttons">
+                                    <button class="btn waves-effect waves-light filter-btn active" data-filter="all">
+                                        Wszystkie
+                                    </button>
+                                    <button class="btn waves-effect waves-light filter-btn" data-filter="active">
+                                        Aktywne
+                                    </button>
+                                    <button class="btn waves-effect waves-light filter-btn" data-filter="completed">
+                                        Zakończone
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista zadań -->
+        <div class="row">
+            <div class="col s12">
+                <div id="tasks-container">
+                    <div class="card">
+                    <div class="card-content center-align">
+                        <p class="grey-text">Brak zadań. Dodaj pierwsze zadanie!</p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal potwierdzenia usunięcia -->
+    <div id="confirm-delete-modal" class="modal">
+        <div class="modal-content">
+            <h4>Potwierdzenie usunięcia</h4>
+            <p>Czy na pewno chcesz usunąć to zadanie? Tej operacji nie można cofnąć.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn waves-effect waves-light red" id="confirm-delete-btn">
+                <i class="material-icons left">delete</i>Usuń
+            </button>
+            <button class="btn waves-effect waves-light grey modal-close">
+                <i class="material-icons left">cancel</i>Anuluj
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal do edycji zadania -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h4>Edytuj zadanie</h4>
+            <form id="edit-form">
+                <div class="row">
+                    <div class="input-field col s12 m6">
+                        <input id="edit-title" type="text" class="validate" required>
+                        <label for="edit-title">Tytuł zadania *</label>
+                    </div>
+                    <div class="input-field col s12 m6">
+                        <input id="edit-assignee" type="text" class="validate">
+                        <label for="edit-assignee">Wykonawca</label>
+                    </div>
+                    <div class="input-field col s12 m6">
+                        <input id="edit-client" type="text" class="validate">
+                        <label for="edit-client">Zleceniodawca zadania</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <textarea id="edit-description" class="materialize-textarea"></textarea>
+                        <label for="edit-description">Opis zadania</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m4">
+                        <select id="edit-priority">
+                            <option value="low">Niski</option>
+                            <option value="medium">Średni</option>
+                            <option value="high">Wysoki</option>
+                        </select>
+                        <label>Priorytet</label>
+                    </div>
+                    <div class="input-field col s12 m4">
+                        <input type="text" id="edit-deadline" class="datepicker">
+                        <label for="edit-deadline">Deadline</label>
+                    </div>
+                    <div class="input-field col s12 m4">
+                        <input id="edit-category" type="text" class="validate">
+                        <label for="edit-category">Kategoria/Tagi</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn waves-effect waves-light blue darken-2" id="save-edit">
+                <i class="material-icons left">save</i>Zapisz
+            </button>
+            <button class="btn waves-effect waves-light grey modal-close">
+                <i class="material-icons left">cancel</i>Anuluj
+            </button>
+        </div>
+    </div>
+
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- Custom JS -->
+    <script src="app.js"></script>
+</body>
+</html>
+
